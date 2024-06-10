@@ -505,14 +505,7 @@ class Table extends HTMLElement {
 
       const statusText = document.createElement('span');
       statusText.textContent = tables.status;
-
-      if (tables.status.toLowerCase() === 'rejected') {
-        statusText.classList.add('status-rejected');
-      } else if (tables.status.toLowerCase() === 'verified') {
-        statusText.classList.add('status-verified');
-      } else if (tables.status.toLowerCase() === 'pending') {
-        statusText.classList.add('status-pending');
-      }
+      statusText.classList.add(`status-${tables.status.toLowerCase()}`)
 
       statusSpan.appendChild(statusText);
       tableStatus.appendChild(statusSpan);
