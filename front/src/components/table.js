@@ -92,10 +92,34 @@ class Table extends HTMLElement {
     this.shadow.innerHTML =
       /* html */` 
       <style>
+        .status-rejected {
+          color: hsl(0, 100%, 50%);
+          background-color: hsl(0, 94%, 87%);
+          padding: 0.5rem;
+          border-radius: 2rem;
+        }
+
+        .status-verified {
+          color: hsl(113, 98%, 17%);
+          background-color: hsl(115, 95%, 84%);
+          padding: 0.5rem;
+          border-radius: 2rem;
+        }
+
+        .status-pending {
+          color: hsl(224, 95%, 33%);
+          background-color: hsl(224, 96%, 82%);
+          padding: 0.5rem;
+          border-radius: 2rem;
+        }
+
+        svg{
+          cursor: pointer;
+        }
+
         .table-container{
           display: flex;
           flex-direction: column;
-          gap: 1rem;
           width: 100%;
         }
 
@@ -104,6 +128,7 @@ class Table extends HTMLElement {
           justify-content: space-between;
           width: 100%;
           gap: 40rem;
+          margin-bottom: 2rem;
         }
 
         .header-input input{
@@ -118,17 +143,16 @@ class Table extends HTMLElement {
         .header-menu button{
           min-height: 3rem;
           min-width: 10rem;
-          background-color: blue;
+          border: none;
+          background-color: hsl(216, 93%, 56%);
           border-radius: 0.2rem;
-          color: white;
+          color: hsl(0, 0%, 100%);
           cursor: pointer;
           outline: none;
         }
 
         .header-button{
-          align-items: center;
-          justify-content: center;
-          display: flex;
+          position: relative;
         }
 
         .header-button svg{
@@ -136,7 +160,12 @@ class Table extends HTMLElement {
           width: 1.5rem;
           fill: white;
         }
-        
+
+        .header-button span {
+          position: relative;
+          top: -6px;
+        }
+
         .nav-menu{
           align-items: center;
           display: flex;
@@ -146,20 +175,22 @@ class Table extends HTMLElement {
         }
 
         .nav-menu{
-          border: 1px solid gray;
+          border: 1px solid hsl(0, 0%, 47%);
         }
 
         .nav-menu svg{
           cursor: pointer;
-          color: gray;
+          color: hsl(0, 0%, 47%);
           width: 1.5rem;
         }
 
-        .table{
+        .table, .titles-table{
           display: grid;
-          grid-template-columns: repeat(8, 1fr);
-          gap: 1rem;
+          grid-template-columns: 0.5fr 0.5fr 1.9fr 1.5fr 0.5fr 1.8fr 1fr 1fr;
+          gap: 5rem;
           align-items: center;
+          border-bottom: 1px solid gray;
+          justify-content: center;
         }
 
         .title{
@@ -168,26 +199,23 @@ class Table extends HTMLElement {
           font-weight: 800;
         }
 
-        .table-check, .table-id, .table-contact, .table-age, .table-country, .table-status, .table-actions{
-          align-items: center;
+        .table-check{
+          justify-content: center;
           display: flex;
           flex-direction: column;
-          justify-content: center;
           gap: 2rem;
         }
 
         .table-check{
-          margin-bottom: 0.4rem;
+          margin-bottom: 1rem;
         }
 
         .table-check svg{
           width: 1.3rem;
         }
 
-        .name-content{
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
+        .table-check-title svg{
+          width: 1.3rem;
         }
 
         .name-content-user{
@@ -211,16 +239,30 @@ class Table extends HTMLElement {
           width: 5rem;
         }
 
-        .table-check, .table-check svg, .table-id span, .table-contact span, .table-age span, .table-country span, .table-status span, .table-actions svg{
+        .table-check, .table-check svg, .table-contact span, .table-age span, .table-country span, .table-status span, .table-actions svg{
           min-height: 2rem;
+        }
+
+        .table-name-contact {
+          display: flex;
+          align-items: center;
+          gap: 2rem;
+        }
+
+        .table-id{
+          max-height: 0.2rem;
         }
 
         .table-check svg{
           min-height: 2rem;
         }
 
-        .name-text span{
-          min-height: 1.8rem;
+        .svg-edit{
+          fill: hsl(221, 100%, 50%);
+        }
+
+        .svg-delete{
+          fill: red;
         }
       </style>
 
@@ -290,13 +332,58 @@ class Table extends HTMLElement {
     spanButtonHeader.textContent = 'Add Customer';
     buttonHeader.appendChild(spanButtonHeader);
 
-    // const nameSpan = document.createElement('span');
-    // spanButtonHeader.classList.add('title')
-    // nameSpan.textContent = 'customer name';
-    // tableContainer.appendChild(nameSpan);
-          
+    // Titulares
+    const titlesTable = document.createElement('div');
+    titlesTable.classList.add('titles-table');
+    tableContainer.appendChild(titlesTable);
+
+    const svgTableCheck = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svgTableCheck.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    svgTableCheck.setAttribute("viewBox", "0 0 24 24");
+    const pathTableCheck = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    pathTableCheck.setAttribute("d", "M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,5V19H5V5H19Z");
+    svgTableCheck.appendChild(pathTableCheck);
+    titlesTable.appendChild(svgTableCheck);
+    titlesTable.classList.add('table-check-title');
+
+    const idSpan = document.createElement('span');
+    idSpan.classList.add('title');
+    idSpan.textContent = '#';
+    titlesTable.appendChild(idSpan);
+
+    const nameSpan = document.createElement('span');
+    nameSpan.classList.add('title');
+    nameSpan.textContent = 'customer name';
+    titlesTable.appendChild(nameSpan);
+
+    const contactSpan = document.createElement('span');
+    contactSpan.classList.add('title');
+    contactSpan.textContent = 'contact';
+    titlesTable.appendChild(contactSpan);
+
+    const ageSpan = document.createElement('span');
+    ageSpan.classList.add('title');
+    ageSpan.textContent = 'age';
+    titlesTable.appendChild(ageSpan);
+
+    const countrySpan = document.createElement('span');
+    countrySpan.classList.add('title');
+    countrySpan.textContent = 'country';
+    titlesTable.appendChild(countrySpan);
+
+    const statusSpan = document.createElement('span');
+    statusSpan.classList.add('title');
+    statusSpan.textContent = 'status';
+    titlesTable.appendChild(statusSpan);
+
+    const actionsSpan = document.createElement('span');
+    actionsSpan.classList.add('title');
+    actionsSpan.textContent = 'actions';
+    titlesTable.appendChild(actionsSpan);
+
+
+    // Contenido de la tabla
     this.data.forEach(tables => {
-      // Contenido
       const table = document.createElement('div');
       table.classList.add('table');
       tableContainer.appendChild(table);
@@ -336,10 +423,6 @@ class Table extends HTMLElement {
       const titleName = document.createElement('div');
       titleName.classList.add('title');
       tableName.appendChild(titleName);
-
-      // const nameSpan = document.createElement('span');
-      // nameSpan.textContent = 'customer name';
-      // titleName.appendChild(nameSpan);
 
       const nameContent = document.createElement('div');
       nameContent.classList.add('name-content');
@@ -418,7 +501,20 @@ class Table extends HTMLElement {
       tableStatus.appendChild(titleStatus);
 
       const statusSpan = document.createElement('span');
-      statusSpan.textContent = tables.status;
+      tableStatus.appendChild(statusSpan);
+
+      const statusText = document.createElement('span');
+      statusText.textContent = tables.status;
+
+      if (tables.status.toLowerCase() === 'rejected') {
+        statusText.classList.add('status-rejected');
+      } else if (tables.status.toLowerCase() === 'verified') {
+        statusText.classList.add('status-verified');
+      } else if (tables.status.toLowerCase() === 'pending') {
+        statusText.classList.add('status-pending');
+      }
+
+      statusSpan.appendChild(statusText);
       tableStatus.appendChild(statusSpan);
 
       const tableActions = document.createElement('div');
@@ -448,6 +544,7 @@ class Table extends HTMLElement {
       pathActionsEdit.setAttribute("d", "M5,3C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19H5V5H12V3H5M17.78,4C17.61,4 17.43,4.07 17.3,4.2L16.08,5.41L18.58,7.91L19.8,6.7C20.06,6.44 20.06,6 19.8,5.75L18.25,4.2C18.12,4.07 17.95,4 17.78,4M15.37,6.12L8,13.5V16H10.5L17.87,8.62L15.37,6.12Z");
       svgActionsEdit.appendChild(pathActionsEdit);
       actionsSvgs.appendChild(svgActionsEdit);
+      svgActionsEdit.classList.add('svg-edit');
 
       const svgActionsDelete = document.createElementNS("http://www.w3.org/2000/svg", "svg");
       svgActionsDelete.setAttribute("xmlns", "http://www.w3.org/2000/svg");
@@ -456,6 +553,7 @@ class Table extends HTMLElement {
       pathActionsDelete.setAttribute("d", "M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19M8,9H16V19H8V9M15.5,4L14.5,3H9.5L8.5,4H5V6H19V4H15.5Z");
       svgActionsDelete.appendChild(pathActionsDelete);
       actionsSvgs.appendChild(svgActionsDelete);
+      svgActionsDelete.classList.add('svg-delete');
     });
   }
 }
